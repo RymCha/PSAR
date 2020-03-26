@@ -126,7 +126,8 @@ int main(){
 	    	etat[i] = boites[r][i][etat[i]];
 	    	//printf("%d \n", etat[i]);
 	    	//printf("%.2x \n", etat[i]);
-	    	//etat[i] ^= (Mask[r+1][i]); // demask
+	    	etat[i] ^= (Mask[r+1][i]); // demask
+	    	//printf("%.2x \n", etat[i]);
 		}
 		if (r == 1 || r == 0) {
 			printf("state au %d-ième tour de boucle apres byte_sub : \n", r);

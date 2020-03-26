@@ -84,15 +84,15 @@ int main(){
     // génère les boites du tour r
     for (int i = 0; i < 16; i++) {
       printf("uint8_t arksb%1x%1x[256] = {\n",r,i);
-      gen_sb_ark(keys[r][i], 0, 0);
-      //gen_sb_ark(keys[r][i], Mask[r][i], Mask[r+1][i]);
+      //gen_sb_ark(keys[r][(i % 4) * 4 + (i / 4)], 0, 0);
+      gen_sb_ark(keys[r][(i % 4) * 4 + (i / 4)], 0, Mask[r+1][i]);
       printf("};\n");
       printf("\n\n");
     }
   }
 
 
-  printf("uint8_t initialize_boites(uint8_t * boites[10][16])\n");
+  printf("void initialize_boites(uint8_t * boites[10][16])\n");
   printf("{\n");
   for (int r= 0; r < 10; r++)
     for (int i = 0; i < 16; i++)

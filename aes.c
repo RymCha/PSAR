@@ -118,7 +118,7 @@ int main(){
 	//uint8_t etat[16] = {0x12, 0x21 ,0x2B, 0x12, 0xAA, 0xF4, 0x96, 0xbc, 0x25, 0x01, 0x25, 0x12, 0x69, 0xab, 0x15, 0x0f};
 	//uint8_t key[16]  = {0x12, 0x45, 0xbc, 0xAA, 0xF4, 0x96, 0x12, 0x69, 0x69, 0xab, 0x15, 0x12, 0xAA, 0xF4, 0x47, 0x9d};
 	uint8_t key[16]  = {0x80, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
-	uint8_t keys[10][16];
+	uint8_t keys[11][16];
  
 	key_schedule(key, keys);
 
@@ -131,7 +131,7 @@ int main(){
 		/* 	printf("************************\n"); */
 		/* } */
 		byte_sub(etat);
-		if (i == 1) {
+		if (i == 0) {
 			printf("*** State after SBox: *** pour i=%d\n", i);
 			afficher_tab(etat);
 			printf("*************************\n");
@@ -152,8 +152,8 @@ int main(){
 		}
 	}
 	add_round_key(etat, keys[10]);
-	/* printf("*** Final ***\n"); */
-	/* afficher_tab(etat); */
+	 printf("*** Final ***\n"); 
+	 afficher_tab(etat); 
 
     /* printf("\n\n ****************\n");
     printf("Clé de ronde numéro dans le vrai %d : \n", 7); 
