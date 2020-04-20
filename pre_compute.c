@@ -19,6 +19,7 @@ void afficher_tab(uint8_t tab[TAILLE]) {
 }
 
 
+
 void key_schedule(uint8_t key[16], uint8_t keys[11][16]){
   for (int32_t i = 0; i < 16; i += 1) {
     keys[0][i] = key[i];
@@ -35,13 +36,77 @@ void key_schedule(uint8_t key[16], uint8_t keys[11][16]){
   }
 }
 
+void shift_row(uint8_t etat[16]) {
+    uint8_t tmp[16] = {
+           etat[0],etat[1],etat[2],etat[3],
+           etat[5],etat[6],etat[7],etat[4],
+           etat[10],etat[11],etat[8],etat[9],
+           etat[15],etat[12],etat[13],etat[14]
+    };
+    for (int i = 0; i < 16; i += 1) {
+    etat[i] = tmp[i];
+    }
+}
 
-void gen_sb_ark(uint8_t oct_key, uint8_t Mask_in, uint8_t Mask_out) { 
+void mix_column(uint8_t etat[16]) {
+    uint8_t tmp[16];
+    for (int32_t i = 0; i < 4; i += 1) {
+    uint8_t etat_i_2, etat_i_3;
+    uint8_t etat_i4_2, etat_i4_3;
+    uint8_t etat_i8_2, etat_i8_3;
+    uint8_t etat_i12_2, etat_i12_3;
+    unsigned char h; // Si h "vaut" 1 je fais le xor sinon non
+  //printf("h = 0x%.2x \n",h);
+
+    h = (unsigned char)((signed char) etat[i] >> 7);
+    etat_i_2   = (etat[i] << 1) ^ 0x1b & h;
+
+    h = (unsigned char)((signed char) etat[i + 4] >> 7);
+    etat_i4_2  = (etat[i + 4] << 1) ^ 0x1b & h;
+
+    h = (unsigned char)((signed char) etat[i + 8] >> 7);
+    etat_i8_2  = (etat[i + 8] << 1) ^ 0x1b & h;
+
+    h = (unsigned char)((signed char) etat[i + 12] >> 7);
+    etat_i12_2  = (etat[i + 12] << 1) ^ 0x1b & h;
+
+       
+    etat_i_3   = etat_i_2   ^ etat[i];
+    etat_i4_3  = etat_i4_2  ^ etat[i + 4];
+    etat_i8_3  = etat_i8_2  ^ etat[i + 8];
+    etat_i12_3 = etat_i12_2 ^ etat[i + 12];
+         
+          
+    tmp[i]      = etat_i_2    ^ etat_i4_3       ^ etat[i + 8] * 1 ^ etat[i + 12] * 1;
+    tmp[i + 4]  = etat[i] * 1 ^ etat_i4_2       ^ etat_i8_3       ^ etat[i + 12] * 1;
+    tmp[i + 8]  = etat[i] * 1 ^ etat[i + 4] * 1 ^ etat_i8_2       ^ etat_i12_3      ;
+    tmp[i + 12] = etat_i_3    ^ etat[i + 4] * 1 ^ etat[i + 8] * 1 ^ etat_i12_2      ;
+    }
+    for (int32_t i = 0 ; i < 16 ; i += 1) {
+    etat[i] = tmp[i];
+    }
+}
+
+void gen_sb_ark(uint8_t oct_key, uint8_t  Mask_in, uint8_t Mask_out) { 
   printf("\t");
   for (uint8_t i = 0; i < 255; i++) {
     printf("0x%.2x, ", Sbox[i ^ oct_key ^ Mask_in] ^ Mask_out);
   }
   printf("0x%.2x  ", Sbox[255 ^ oct_key ^ Mask_in] ^ Mask_out);
+}
+
+uint8_t demask_MC(uint8_t etat[], int r, uint8_t * Mask[]) {
+  uint8_t tmp[16];
+  for (int32_t i = 0; i < 16; i += 1) {
+    tmp[i] = Mask[r + 1][i];
+
+    }
+  shift_row(tmp);
+  mix_column(tmp);
+  for (int32_t i = 0; i < 16; i += 1) {
+    etat[i] ^= tmp[i];  
+    }
+    return 0;
 }
 
 
@@ -85,12 +150,12 @@ int main(){
     for (int i = 0; i < 16; i++) {
       printf("uint8_t arksb%1x%1x[256] = {\n",r,i);
       //gen_sb_ark(keys[r][(i % 4) * 4 + (i / 4)], 0, 0);
-      gen_sb_ark(keys[r][(i % 4) * 4 + (i / 4)], 0, Mask[r+1][i]);
+      gen_sb_ark(keys[r][(i % 4) * 4 + (i / 4)], demask_MC(etat, r, Mask), Mask[r+1][i]);
       printf("};\n");
       printf("\n\n");
     }
   }
-
+//mc(sr(mask)) // demask
 
   printf("void initialize_boites(uint8_t * boites[10][16])\n");
   printf("{\n");

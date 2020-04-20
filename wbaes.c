@@ -105,6 +105,38 @@ void add_round_key(uint8_t etat[], uint8_t key[]) {
     }
 }
 
+void demask_SR(uint8_t etat[], int r) {
+	uint8_t tmp[16];
+		//if (r == 0) {printf("*** Mask récupérés par demask_SR au rang %d : *** \n", r );}
+	for (int32_t i = 0; i < 16; i += 1) {
+		tmp[i] = Mask[r + 1][i];
+	/*	if (r == 0)
+			printf("0x%.2x  ", tmp[i]);*/
+    }
+    
+
+   /* if (r == 0)
+			printf("\n\n");
+	*/
+	shift_row(tmp);
+
+	for (int32_t i = 0; i < 16; i += 1) {
+		etat[i] ^= tmp[i];	
+    }
+}
+
+void demask_MC(uint8_t etat[], int r) {
+	uint8_t tmp[16];
+	for (int32_t i = 0; i < 16; i += 1) {
+		tmp[i] = Mask[r + 1][i];
+
+    }
+	shift_row(tmp);
+	mix_column(tmp);
+	for (int32_t i = 0; i < 16; i += 1) {
+		etat[i] ^= tmp[i];	
+    }
+}
 
 uint8_t * boites[10][16];
 
@@ -126,21 +158,29 @@ int main(){
 	    	etat[i] = boites[r][i][etat[i]];
 	    	//printf("%d \n", etat[i]);
 	    	//printf("%.2x \n", etat[i]);
-	    	etat[i] ^= (Mask[r+1][i]); // demask
+	    	//etat[i] ^= (Mask[r+1][i]); // demask
 	    	//printf("%.2x \n", etat[i]);
 		}
-		if (r == 1 || r == 0) {
+		/*if (r == 1 || r == 0) {
 			printf("state au %d-ième tour de boucle apres byte_sub : \n", r);
 			afficher_tab(etat);
 			printf("\n");
-		}
+		}*/
 
 	// ici, les valeurs sont censées être les bonnes
 	// SR
 		shift_row(etat);
+		//demask_SR(etat, r);
+		/*if (r == 0) {
+			printf("state au %d-ième tour de boucle apres shift_row : \n", r);
+			afficher_tab(etat);
+			printf("\n");
+		}*/
+
 		if (r != 9) {
 	    // MC
 	    	mix_column(etat);
+	    	//demask_MC(etat, r);
 	    	if (r == 0) {
 				printf("state au %d-ième tour de boucle apres mix_column : \n", r);
 				afficher_tab(etat);

@@ -137,11 +137,11 @@ int main(){
 			printf("*************************\n");
 		}
 		shift_row(etat);
-		/* if (i == 0) { */
-		/* 	printf("*** State after Shift Rows: ***\n"); */
-		/* 	afficher_tab(etat); */
-		/* 	printf("*******************************\n"); */
-		/* } */
+		 if (i == 0) { 
+		 	printf("*** State after Shift Rows: ***\n"); 
+		 	afficher_tab(etat); 
+		 	printf("*******************************\n"); 
+		 } 
 		if (i != 9) {
 			mix_column(etat);
 			 if (i == 0) { 
