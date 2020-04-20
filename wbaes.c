@@ -114,7 +114,6 @@ void demask_SR(uint8_t etat[], int r) {
 			printf("0x%.2x  ", tmp[i]);*/
     }
     
-
    /* if (r == 0)
 			printf("\n\n");
 	*/
@@ -161,17 +160,21 @@ int main(){
 	    	//etat[i] ^= (Mask[r+1][i]); // demask
 	    	//printf("%.2x \n", etat[i]);
 		}
-		/*if (r == 1 || r == 0) {
-			printf("state au %d-ième tour de boucle apres byte_sub : \n", r);
+		if (r == 1) {
+			printf("state apres SBOX pour r = %d : \n", r);
 			afficher_tab(etat);
 			printf("\n");
-		}*/
+
+			printf("Masks pour r + 1 = %d : \n", r + 1);
+			afficher_tab(Mask[r + 1]);
+			printf("\n");
+		}
 
 	// ici, les valeurs sont censées être les bonnes
 	// SR
 		shift_row(etat);
 		//demask_SR(etat, r);
-		/*if (r == 0) {
+		/*if (r == 1) {
 			printf("state au %d-ième tour de boucle apres shift_row : \n", r);
 			afficher_tab(etat);
 			printf("\n");
@@ -181,11 +184,13 @@ int main(){
 	    // MC
 	    	mix_column(etat);
 	    	//demask_MC(etat, r);
-	    	if (r == 0) {
-				printf("state au %d-ième tour de boucle apres mix_column : \n", r);
+	    	/*if (r == 0) {
+				printf("state apres mix_column pour r = %d : \n", r);
 				afficher_tab(etat);
 				printf("\n");
+
 			}
+			*/
 		}
     }
     
@@ -195,6 +200,7 @@ int main(){
     printf("0x0e  0xc6  0x45  0x14  0xdd  0x21  0x5b  0x18  0x33  0xe5  0xd8  0xbe  0xd3  0x46  0xba  0xc8\n");
     printf("*** Final ***\n");
     afficher_tab(etat);
+    
     /*printf("\n\n ****************\n");
     printf("Clé de ronde numéro dans le WB %d : \n", 10); 
     afficher_tab(keys[10]); 
