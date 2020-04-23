@@ -110,6 +110,21 @@ uint8_t demask_MC(uint8_t etat[], int r, uint8_t Mask[11][16]) {
     return 0;
 }
 
+void shift_rows_inverse( uint8_t etat[16]) {
+
+    uint8_t tmp[16] = {
+           etat[0],etat[1],etat[2],etat[3],
+           etat[7],etat[4],etat[5],etat[6],
+           etat[10],etat[11],etat[8],etat[9],
+           etat[13],etat[14],etat[15],etat[12]
+    };
+    for (int i = 0; i < 16; i += 1) {
+    etat[i] = tmp[i];
+    }
+
+
+}
+
 
 int main(){
 
@@ -131,10 +146,12 @@ int main(){
   }
 
   // Sortie du dernier tour : pas de masque !
-  for (int i = 0; i < 16; i++)
-    Mask[10][i] = 0;
-    
+
   key_schedule(key, keys);
+  shift_rows_inverse(keys[10]);  
+  for (int i = 0; i < 16; i++)
+    Mask[10][i] = keys[10][i];
+    
 
   printf("uint8_t Mask[11][16] = {\n");
   for (int r = 0; r < 11; r++) {
@@ -146,6 +163,7 @@ int main(){
   printf("};\n\n");
 	    
    uint8_t tmp[16];  
+
   for (int r = 0; r < 10; r++) {
     // génère les boites du tour r
 
@@ -154,28 +172,17 @@ int main(){
     }
     shift_row(tmp);
     mix_column(tmp);
+
     for (int i = 0; i < 16; i++) {
       printf("uint8_t arksb%1x%1x[256] = {\n",r,i);
-      //gen_sb_ark(keys[r][(i % 4) * 4 + (i / 4)], 0, 0);
-      //if (r != 0) 
+      gen_sb_ark(keys[r][(i % 4) * 4 + (i / 4)], tmp[i], Mask[r+1][i]);
 
-     
-  //printf("Je suis dans le demask et r = %d.\n", r );
-   
-
-      //if (r != 0)
-        gen_sb_ark(keys[r][(i % 4) * 4 + (i / 4)], tmp[i], Mask[r+1][i]);
-     /* if (r == 0)
-        gen_sb_ark(keys[r][(i % 4) * 4 + (i / 4)], 0, Mask[r+1][i]);
-  */
-     /* if (r != 0)
-        demask_MC(etat, r, Mask);
-      gen_sb_ark(keys[r][(i % 4) * 4 + (i / 4)], 0, Mask[r+1][i]);
-      */
       printf("};\n");
       printf("\n\n");
     }
   }
+
+ 
 //mc(sr(mask)) // demask
 
   printf("void initialize_boites(uint8_t * boites[10][16])\n");

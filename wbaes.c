@@ -165,8 +165,12 @@ int main(){
 			afficher_tab(etat);
 			printf("\n");
 
-			printf("Masks pour r + 1 = %d : \n", r + 1);
-			afficher_tab(Mask[r + 1]);
+			printf("Masks \n");
+			afficher_tab(Mask[10]);
+			printf("\n");
+
+			printf("keys \n");
+			afficher_tab(keys[10]);
 			printf("\n");
 		}
 
@@ -188,13 +192,12 @@ int main(){
 				printf("state apres mix_column pour r = %d : \n", r);
 				afficher_tab(etat);
 				printf("\n");
-
 			}
 			*/
 		}
     }
     
-    add_round_key(etat, keys[10]);
+    //add_round_key(etat, keys[10]);
 
     printf("*** Attendu *** \n");
     printf("0x0e  0xc6  0x45  0x14  0xdd  0x21  0x5b  0x18  0x33  0xe5  0xd8  0xbe  0xd3  0x46  0xba  0xc8\n");
@@ -215,4 +218,3 @@ int main(){
    	*/
     return 0;
 }
-  
