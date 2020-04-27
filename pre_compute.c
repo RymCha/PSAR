@@ -121,8 +121,6 @@ void shift_rows_inverse( uint8_t etat[16]) {
     for (int i = 0; i < 16; i += 1) {
     etat[i] = tmp[i];
     }
-
-
 }
 
 
@@ -150,7 +148,29 @@ int main(){
   key_schedule(key, keys);
   shift_rows_inverse(keys[10]);  
   for (int i = 0; i < 16; i++)
-    Mask[10][i] = keys[10][i];
+    //Mask[10][i] = keys[10][(i % 4) * 4 + (i / 4)];
+  Mask[10][i] = keys[10][i];
+uint8_t tmp2[16];
+  //shift_rows_inverse(Mask[10]); 
+  tmp2[0] = Mask[10][0];
+  tmp2[1] = Mask[10][5];
+  tmp2[2] = Mask[10][0x0a];
+  tmp2[3] = Mask[10][0x0f];
+  tmp2[4] = Mask[10][1];
+  tmp2[5] = Mask[10][6];
+  tmp2[6] = Mask[10][0x0b];
+  tmp2[7] = Mask[10][0x0c];
+  tmp2[8] = Mask[10][2];
+  tmp2[9] = Mask[10][7];
+  tmp2[0x0a] = Mask[10][8];
+  tmp2[0x0b] = Mask[10][0x0d];
+  tmp2[0x0c] = Mask[10][3];
+  tmp2[0x0d] = Mask[10][4];
+  tmp2[0x0e] = Mask[10][9];
+  tmp2[0x0f] = Mask[10][0x0e];
+
+shift_rows_inverse(tmp2); 
+
     
 
   printf("uint8_t Mask[11][16] = {\n");
@@ -175,7 +195,13 @@ int main(){
 
     for (int i = 0; i < 16; i++) {
       printf("uint8_t arksb%1x%1x[256] = {\n",r,i);
-      gen_sb_ark(keys[r][(i % 4) * 4 + (i / 4)], tmp[i], Mask[r+1][i]);
+      if ( r!= 9)
+        gen_sb_ark(keys[r][(i % 4) * 4 + (i / 4)], tmp[i], Mask[r+1][i]);
+
+      //key[(i % 4) * 4 + (i / 4)
+     if (r == 9)
+        gen_sb_ark(keys[r][(i % 4) * 4 + (i / 4)], tmp[i], tmp2[i]);
+
 
       printf("};\n");
       printf("\n\n");
